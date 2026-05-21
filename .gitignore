@@ -1,0 +1,12 @@
+# duh
+.env
+
+# macOS junk
+.DS_Store
+
+# Loguru junk
+logs/
+
+# Python junk
+__pycache__/
+.venv/
