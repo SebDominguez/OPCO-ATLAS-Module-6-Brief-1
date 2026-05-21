@@ -18,4 +18,6 @@ async def receive_color(data: str = Form(...)):
 
 @app.get("/metrics")
 async def metrics():
-    return "toto"
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST) # et media type ca marche pas non plus
+    #return Response("toto", media_type="text/plain") # apparement cette daube de prometheus veu pas de json
+    # return "toto"

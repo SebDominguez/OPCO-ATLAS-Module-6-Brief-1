@@ -18,7 +18,7 @@ services:
     environment:
       API_URL: http://api:${FASTAPI_PORT}/
     volumes:
-      - ./logs:/logs  # Montage du volume pour stocker les logs de loguruuuuuuuu      
+      - ./logs:/logs  # Montage du volume pour stocker les logs de loguruuuuuuuu
     networks:
       - app_network
 
@@ -44,9 +44,18 @@ services:
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
     volumes:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources      
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     depends_on:
       - prometheus
+    networks:
+      - app_network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    ports:
+      - "${NODE_EXPORTER_PORT}:${NODE_EXPORTER_PORT}"
     networks:
       - app_network
 
