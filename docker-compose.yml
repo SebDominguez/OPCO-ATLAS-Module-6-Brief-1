@@ -3,7 +3,7 @@ services:
   api:
     build: fastapi_app
     ports:
-      - "${FASTAPI_PORT}:${FASTAPI_PORT}"
+      - "${FASTAPI_PORT:-8080}:${FASTAPI_PORT:-8080}"
     environment:
       FASTAPI_PORT: ${FASTAPI_PORT}
     networks:
@@ -12,11 +12,11 @@ services:
   streamlit:
     build: streamlit_app
     ports:
-      - "${STREAMLIT_PORT}:${STREAMLIT_PORT}"
+      - "${STREAMLIT_PORT:-8501}:${STREAMLIT_PORT:-8501}"
     depends_on:
       - api
     environment:
-      API_URL: http://api:${FASTAPI_PORT}/
+      API_URL: http://api:${FASTAPI_PORT:-8080}/
     volumes:
       - ./logs:/logs  # Montage du volume pour stocker les logs de loguruuuuuuuu
     networks:
@@ -25,7 +25,7 @@ services:
   prometheus:
     image: prom/prometheus:latest
     ports:
-      - "${PROMETHEUS_PORT}:${PROMETHEUS_PORT}"
+      - "${PROMETHEUS_PORT:-9090}:${PROMETHEUS_PORT:-9090}"
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     command:
@@ -38,7 +38,7 @@ services:
   grafana:
     image: grafana/grafana:latest
     ports:
-      - "${GRAFANA_PORT}:${GRAFANA_PORT}"
+      - "${GRAFANA_PORT:-3000}:${GRAFANA_PORT:-3000}"
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
@@ -55,7 +55,18 @@ services:
     container_name: node-exporter
     restart: unless-stopped
     ports:
-      - "${NODE_EXPORTER_PORT}:${NODE_EXPORTER_PORT}"
+      - "${NODE_EXPORTER_PORT:-9100}:${NODE_EXPORTER_PORT:-9100}"
+    networks:
+      - app_network
+
+  uptime-kuma:
+    image: louislam/uptime-kuma:latest
+    container_name: uptime-kuma
+    restart: unless-stopped
+    ports:
+      - "${UPTIME_KUMA_PORT:-3001}:${UPTIME_KUMA_PORT:-3001}"
+    volumes:
+      - ./uptime-kuma-data:/app/data
     networks:
       - app_network
 

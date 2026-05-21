@@ -21,3 +21,7 @@ async def metrics():
     return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST) # et media type ca marche pas non plus
     #return Response("toto", media_type="text/plain") # apparement cette daube de prometheus veu pas de json
     # return "toto"
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
