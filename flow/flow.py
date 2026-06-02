@@ -21,7 +21,7 @@ def check_random(nb: float) -> None:
     logger.info(f"check_random({nb:.3f})")
     if nb < 0.5:
         logger.info("nombre inférieur à 0.5")
-        raise ValueError(f"Alerte : nb trop petit : {nb}")   # ça, ça déclenche retry (max 2 car retries=2)
+        raise ValueError(f"Alerte : nb trop petit : {nb}")   # ça, ça déclenche le hook on_failure apres 2 retries
     else:
         logger.info("nombre supérieur ou égal à 0.5")
 
