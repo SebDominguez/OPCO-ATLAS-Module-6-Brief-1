@@ -12,3 +12,9 @@ __pycache__/
 .venv/
 
 # Uptime Kuma junk
+uptime-kuma-data/
+
+# Prefect junk
+prefect_data/
+prefect_data/
+prefect_data/
