@@ -76,24 +76,36 @@ services:
     ports:
       - "4200:4200" # UI + API
     volumes:
-      - ./prefect_data:/root/.prefect # persistance SQLite
+      - prefect_data:/root/.prefect # persistance SQLite
     restart: unless-stopped
+    stop_grace_period: 5s
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health').read()\" || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 10s
     networks:
       - app_network
 
   flow:
     build: flow
     depends_on:
-      - prefect-server
+      prefect-server:
+        condition: service_healthy
     environment:
       - PREFECT_API_URL=http://prefect-server:4200/api
       - PYTHONIOENCODING=utf-8
-    restart: unless-stopped
+    restart: on-failure:3
+    stop_grace_period: 5s
     #volumes:
       # non utilisé
       # - ./flow/logs:/app/logs/
     networks:
       - app_network
+
+volumes:
+  prefect_data:
 
 networks:
   app_network:
