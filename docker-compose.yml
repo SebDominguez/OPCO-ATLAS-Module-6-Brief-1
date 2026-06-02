@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   api:
     build: fastapi_app
@@ -79,6 +78,8 @@ services:
     volumes:
       - ./prefect_data:/root/.prefect # persistance SQLite
     restart: unless-stopped
+    networks:
+      - app_network
 
   flow:
     build: flow
@@ -91,6 +92,8 @@ services:
     #volumes:
       # non utilisé
       # - ./flow/logs:/app/logs/
+    networks:
+      - app_network
 
 networks:
   app_network:

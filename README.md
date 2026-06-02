@@ -64,7 +64,7 @@ curl -s http://localhost:8080/metrics | head
 
 Ouvrir http://localhost:9090/targets. Les 3 jobs doivent être **UP** :
 
-- `prometheus` → `localhost:9090` (Prometheus se scrape lui-même)
+- `prometheus` → `localhost:9090` (Prometheus se monitor lui-même)
 - `fastapi` → `api:8080` (métriques applicatives Python)
 - `node` → `node-exporter:9100` (métriques système)
 
@@ -81,27 +81,24 @@ Allez sur http://localhost:3000
 
 ### 4. Uptime Kuma surveille l'API
 
-http://localhost:3001. Après la configuration initiale (voir section ci-dessous), tu dois voir le monitor `API` en vert **"En ligne"** avec une disponibilité de 100%.
+http://localhost:3001. Après la configuration initiale (voir section ci-dessous), le monitor `API` en vert **"En ligne"** avec une disponibilité de 100%.
 
 ---
 
 ## Configuration d'Uptime Kuma (étape manuelle)
 
-Uptime Kuma ne supporte **pas** la configuration par variables d'environnement pour les monitors et notifications (limitation connue du projet — seules les variables d'infrastructure type port/SSL/DB sont supportées). Les étapes ci-dessous se font une seule fois dans l'UI ; les données sont ensuite persistées dans le volume `./uptime-kuma-data`.
+Uptime Kuma ne supporte pas la configuration par variables d'environnement pour les monitors et notifications (limitation connue du projet — seules les variables d'infrastructure type port/SSL/DB sont supportées). Les étapes ci-dessous se font une seule fois dans l'UI ; les données sont ensuite persistées dans le volume `./uptime-kuma-data`.
 
 ### Étape 1 — Compte admin
 
 À la première visite de http://localhost:3001, crée le compte administrateur (login + mot de passe).
 
-
 ### Étape 2 — Créer le webhook Discord
 
-1. Dans Discord, ouvre les **paramètres** du salon souhaité (icône engrenage)
+1. Dans Discord, ouvrir les **paramètres** du salon souhaité (icône engrenage)
 2. **Intégrations** → **Webhooks** → **Nouveau webhook**
 3. Optionnel : renomme-le (par ex. `Uptime Kuma Bot`)
 4. **Copier l'URL du webhook**
-
-⚠️ Cette URL est un **secret**. Ne pas la committer dans Git. Elle est uniquement saisie dans l'UI Uptime Kuma et stockée dans le volume persistant.
 
 ![Create hook](./img/create-hook.png)
 

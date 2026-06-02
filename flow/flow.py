@@ -13,22 +13,25 @@ import random
 os.environ.setdefault("PYTHONIOENCODING", "utf-8")
 os.environ.setdefault("PREFECT_API_URL","http://127.0.0.1:4200/api")
 
-@task(retries=2, retry_delay_seconds=1)
-def check_random(nb):
-    logger.info(f"check_random()")
-    if nb < 2:
-        logger.info(f"nombre inferieur a 0.5")
+def check_random_failed(task, task_run, state):
+    logger.error(f"La task {task.name} a foiré après {task_run.run_count} retries. Raison : {state.message}")
+
+@task(retries=2, retry_delay_seconds=1, on_failure=[check_random_failed])
+def check_random(nb: float) -> None:
+    logger.info(f"check_random({nb:.3f})")
+    if nb < 0.5:
+        logger.info("nombre inférieur à 0.5")
+        raise ValueError(f"Alerte : nb trop petit : {nb}")   # ça, ça déclenche retry (max 2 car retries=2)
     else:
-        logger.info(f"nombre superieur a 0.5")
+        logger.info("nombre supérieur ou égal à 0.5")
 
 @flow
 def periodic_check():
-    logger.info(f"test()")
-    logger.info(f"preiodic_check()")
-    check_random(random.uniform(0.0, 5.0))
+    logger.info("periodic_check()")
+    check_random(random.uniform(0.0, 1.0))
 
 if __name__ == "__main__":
-	periodic_check.serve(
-	name="every-10s",
-	interval=5
-)
+    periodic_check.serve(
+        name="every-10s",
+        interval=5
+    )
